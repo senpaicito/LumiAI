@@ -9,7 +9,15 @@ class LumiDiscordBot:
     def __init__(self, ai_engine, token=None):
         self.ai_engine = ai_engine
         self.token = token or settings.DISCORD_TOKEN
+        self.command_prefix = settings.get('discord.command_prefix', '!')
+        self.enabled = getattr(settings, 'DISCORD_ENABLED', True)
         self.logger = logging.getLogger(__name__)
+        
+        # If bot is disabled, don't set up Discord components
+        if not self.enabled:
+            self.logger.info("Discord bot is disabled in settings")
+            self.bot = None
+            return
         
         # Set up Discord intents
         intents = discord.Intents.default()
@@ -18,7 +26,7 @@ class LumiDiscordBot:
         
         # Create bot instance
         self.bot = commands.Bot(
-            command_prefix='!',
+            command_prefix=self.command_prefix,
             intents=intents,
             help_command=None
         )
@@ -26,6 +34,10 @@ class LumiDiscordBot:
         self.setup_handlers()
     
     def setup_handlers(self):
+        # If bot is disabled, don't set up handlers
+        if not self.enabled or self.bot is None:
+            return
+            
         @self.bot.event
         async def on_ready():
             self.logger.info(f'Discord bot logged in as {self.bot.user.name}')
@@ -151,6 +163,10 @@ class LumiDiscordBot:
     
     async def start(self):
         """Start the Discord bot"""
+        if not self.enabled:
+            self.logger.info("Discord bot is disabled in settings")
+            return False
+        
         if not self.token:
             self.logger.error("Discord bot token not provided")
             return False
@@ -164,4 +180,5 @@ class LumiDiscordBot:
     
     async def stop(self):
         """Stop the Discord bot"""
-        await self.bot.close()
+        if self.bot and self.enabled:
+            await self.bot.close()

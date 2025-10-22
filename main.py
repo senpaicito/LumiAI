@@ -17,6 +17,7 @@ from src.integrations.discord_bot import LumiDiscordBot
 from src.integrations.speech_tts import TTSEngine
 from src.integrations.speech_stt import STTEngine
 from src.integrations.vtube_studio import VTubeStudio
+from src.core.plugin_system.plugin_manager import PluginManager
 from config import settings
 
 class LumiCompanion:
@@ -30,6 +31,7 @@ class LumiCompanion:
         self.vts_client = None
         self.web_server = None
         self.discord_bot = None
+        self.plugin_manager = None
         self.web_thread = None
         
     async def initialize(self):
@@ -46,9 +48,13 @@ class LumiCompanion:
             self.tts_engine = TTSEngine()
             self.stt_engine = STTEngine()
             
-            # Initialize VTube Studio
-            print("Initializing VTube Studio...")
-            self.vts_client = VTubeStudio()
+            # Initialize VTube Studio only if enabled
+            if settings.get('vtube_studio.enabled', False):
+                print("Initializing VTube Studio...")
+                self.vts_client = VTubeStudio()
+            else:
+                print("VTube Studio disabled in settings")
+                self.vts_client = None
             
             # Initialize AI Engine with all integrations
             self.ai_engine = AIEngine(
@@ -67,19 +73,36 @@ class LumiCompanion:
             print("Initializing memory system...")
             await self.memory_system.initialize()
             
+            # Initialize Plugin System
+            print("Initializing plugin system...")
+            self.plugin_manager = PluginManager(self.ai_engine)
+            plugin_success = await self.plugin_manager.initialize()
+            if plugin_success:
+                print(f"✓ Plugin system loaded with {len(self.plugin_manager.plugins)} plugins")
+                # Connect plugin manager to AI engine
+                self.ai_engine.plugin_manager = self.plugin_manager
+            else:
+                print("⚠ Plugin system initialization had issues, but continuing...")
+            
             # Initialize WebUI with mobile and streaming support
             print("Initializing WebUI with mobile support...")
             self.web_server = WebServer(self.ai_engine, settings.WEB_HOST, settings.WEB_PORT)
             
-            # Initialize Discord bot (optional)
-            self.discord_bot = LumiDiscordBot(self.ai_engine)
+            # Initialize Discord bot only if enabled
+            if settings.get('discord.enabled', False):
+                print("Initializing Discord bot...")
+                self.discord_bot = LumiDiscordBot(self.ai_engine)
+            else:
+                print("Discord bot disabled in settings")
+                self.discord_bot = None
             
             # Initialize TTS/STT engines
             await self.tts_engine.initialize()
             await self.stt_engine.initialize()
             
-            # Connect to VTube Studio
-            await self.vts_client.connect()
+            # Connect to VTube Studio if enabled
+            if self.vts_client:
+                await self.vts_client.connect()
             
             print("Lumi AI Companion initialized successfully!")
             return True
@@ -98,8 +121,15 @@ class LumiCompanion:
     
     async def start_discord_bot(self):
         """Start the Discord bot"""
+        if not self.discord_bot:
+            return
+            
         try:
-            await self.discord_bot.start()
+            success = await self.discord_bot.start()
+            if success:
+                self.logger.info("Discord bot started successfully")
+            else:
+                self.logger.warning("Discord bot failed to start")
         except Exception as e:
             self.logger.error(f"Discord bot error: {e}")
     
@@ -117,26 +147,65 @@ class LumiCompanion:
             self.web_thread.start()
             print("WebUI server thread started")
             
-            # Start Discord bot if token is available
+            # Start Discord bot if enabled
             discord_task = None
-            if settings.DISCORD_TOKEN:
+            if self.discord_bot:
                 discord_task = asyncio.create_task(self.start_discord_bot())
                 print("Discord bot task created")
             else:
-                print("No Discord token found. Discord bot disabled.")
+                print("Discord bot disabled in settings")
             
             print("Lumi AI Companion is now running!")
             print(f"WebUI available at: http://{settings.WEB_HOST}:{settings.WEB_PORT}")
+            print(f"Ollama Model: {settings.OLLAMA_MODEL}")
+            
+            if self.plugin_manager and self.plugin_manager.plugins:
+                print(f"Plugins loaded: {', '.join(self.plugin_manager.plugins.keys())}")
+            
+            if self.vts_client:
+                print("VTube Studio: Enabled")
+            else:
+                print("VTube Studio: Disabled")
+                
+            if self.discord_bot:
+                print("Discord Bot: Enabled")
+            else:
+                print("Discord Bot: Disabled")
+                
             print("Voice commands available: Say 'Hey Lumi' to activate voice input")
             print("Press Ctrl+C to stop")
             
-            # Voice command loop
+            # Enhanced voice command loop with plugin support
             async def voice_command_loop():
                 while True:
-                    # Simple voice activation (you can enhance this with wake word detection)
+                    try:
+                        # Check for voice input with plugin preprocessing
+                        if (self.stt_engine and self.stt_engine.is_initialized and 
+                            self.plugin_manager):
+                            # This is where you'd integrate wake word detection
+                            # and plugin voice processing
+                            pass
+                    except Exception as e:
+                        self.logger.error(f"Voice loop error: {e}")
                     await asyncio.sleep(1)
             
             voice_task = asyncio.create_task(voice_command_loop())
+            
+            # Plugin monitoring task
+            async def plugin_monitor_loop():
+                while True:
+                    try:
+                        # Monitor plugin health and metrics
+                        if self.plugin_manager:
+                            enabled_plugins = [name for name, plugin in self.plugin_manager.plugins.items() 
+                                            if plugin.enabled]
+                            if enabled_plugins:
+                                self.logger.debug(f"Active plugins: {enabled_plugins}")
+                    except Exception as e:
+                        self.logger.error(f"Plugin monitor error: {e}")
+                    await asyncio.sleep(30)  # Check every 30 seconds
+            
+            monitor_task = asyncio.create_task(plugin_monitor_loop())
             
             # Keep the main thread alive
             while True:
@@ -148,10 +217,21 @@ class LumiCompanion:
             print(f"Unexpected error in main loop: {e}")
             traceback.print_exc()
         finally:
+            # Graceful shutdown
+            print("Initiating graceful shutdown...")
+            
+            if self.plugin_manager:
+                print("Shutting down plugin system...")
+                await self.plugin_manager.shutdown()
+            
             if self.discord_bot:
+                print("Stopping Discord bot...")
                 await self.discord_bot.stop()
+            
             if self.vts_client:
+                print("Disconnecting from VTube Studio...")
                 await self.vts_client.disconnect()
+            
             print("Lumi AI Companion shutdown complete.")
 
 def main():

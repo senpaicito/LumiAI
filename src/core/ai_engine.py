@@ -14,6 +14,7 @@ class AIEngine:
         self.character_data = None
         self.logger = logging.getLogger(__name__)
         self.current_emotion = "neutral"
+        self.plugin_manager = None  # Plugin system integration
         
         # Import and initialize advanced systems
         from .personality_engine import PersonalityEngine
@@ -45,8 +46,12 @@ class AIEngine:
             raise
     
     async def generate_response(self, user_input, conversation_context=None):
-        """Generate a response using Ollama with advanced context"""
+        """Generate a response using Ollama with advanced context and plugin support"""
         try:
+            # Plugin hook: pre-process user input
+            if self.plugin_manager:
+                user_input = await self.plugin_manager.dispatch_message_received(user_input)
+            
             # Get all context systems
             memory_context = await self.memory_system.get_conversation_context(user_input)
             personality_context = await self.personality_engine.get_personality_context()
@@ -79,15 +84,31 @@ class AIEngine:
             # Clean response
             clean_response = self._clean_response(response)
             
+            # Plugin hook: post-process AI response
+            if self.plugin_manager:
+                await self.plugin_manager.dispatch_message_sent(clean_response)
+            
             # Analyze sentiment
             sentiment = self._analyze_sentiment(user_input + " " + clean_response)
             
             # Update all tracking systems
             await self._update_advanced_systems(user_input, clean_response, emotion, sentiment)
             
+            # Plugin hook: emotion change notification
+            if self.plugin_manager:
+                await self.plugin_manager.dispatch_emotion_changed(emotion, 1.0)
+            
             # Speak response if TTS is available
             if self.tts_engine and self.tts_engine.is_initialized:
-                await self.tts_engine.speak(clean_response)
+                # Plugin hook: pre-process voice output
+                tts_text = clean_response
+                if self.plugin_manager:
+                    voice_results = await self.plugin_manager.dispatch_voice_output(tts_text)
+                    if voice_results and len(voice_results) > 0:
+                        # Use the last plugin's modification
+                        tts_text = voice_results[-1]
+                
+                await self.tts_engine.speak(tts_text)
             
             return clean_response
             
@@ -187,6 +208,11 @@ class AIEngine:
         # Store in memory systems
         await self.memory_system.store_interaction(user_input, ai_response, emotion=emotion)
         
+        # Plugin hook: memory stored notification
+        if self.plugin_manager:
+            # Use the correct method name
+            await self.plugin_manager.dispatch_memory_stored("conversation", f"User: {user_input}\nAI: {ai_response}")
+        
         # Update personality engine
         await self.personality_engine.update_from_interaction(user_input, ai_response, sentiment)
         
@@ -272,6 +298,11 @@ class AIEngine:
             relationship_context = await self.relationship_tracker.get_relationship_context()
             analytics_summary = await self.conversation_analytics.get_analytics_summary()
             
+            # Plugin hook: get plugin metrics for dashboard
+            plugin_metrics = []
+            if self.plugin_manager:
+                plugin_metrics = await self.plugin_manager.dispatch_dashboard_update()
+            
             return {
                 "memory_system": memory_stats,
                 "emotional_state": emotional_state,
@@ -281,19 +312,27 @@ class AIEngine:
                 "character": {
                     "name": self.character_data['name'] if self.character_data else "Unknown",
                     "current_emotion": self.current_emotion
-                }
+                },
+                "plugins": plugin_metrics
             }
         except Exception as e:
             self.logger.error(f"Error getting advanced stats: {e}")
             return {}
     
     async def process_voice_input(self):
-        """Process voice input and generate response"""
+        """Process voice input and generate response with plugin support"""
         if not self.stt_engine or not self.stt_engine.is_initialized:
             return None, "Voice input not available"
         
         self.logger.info("Listening for voice input...")
         transcription = await self.stt_engine.process_voice_input()
+        
+        # Plugin hook: process voice input
+        if transcription and self.plugin_manager:
+            processed_transcription = await self.plugin_manager.dispatch_voice_input(transcription)
+            if processed_transcription and len(processed_transcription) > 0:
+                # Use the last plugin's modification
+                transcription = processed_transcription[-1]
         
         if transcription:
             response = await self.generate_response(transcription)

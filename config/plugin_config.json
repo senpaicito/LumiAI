@@ -1,0 +1,46 @@
+{
+  "plugins": {
+    "test": {
+      "enabled": true,
+      "settings": {
+        "setting1": "1",
+        "setting2": "option2"
+      }
+    },
+    "weather": {
+      "enabled": false,
+      "settings": {
+        "api_key": "your_openweathermap_api_key_here",
+        "default_location": "London,UK",
+        "units": "metric",
+        "cache_duration": 300,
+        "auto_respond": true,
+        "dashboard_display": true
+      }
+    },
+    "example": {
+      "enabled": true,
+      "settings": {}
+    },
+    "datetime_plugin": {
+      "enabled": true,
+      "settings": {
+        "return_strategy": "dict_stop_propagation",
+        "timezone": "",
+        "time_format": "HH:mm:ss",
+        "date_format": "YYYY-MM-DD",
+        "datetime_format": "YYYY-MM-DD HH:mm:ss",
+        "dashboard_time_format": "HH:mm:ss",
+        "dashboard_date_format": "YYYY-MM-DD",
+        "verbose_responses": true,
+        "include_timezone": true,
+        "natural_language": true
+      }
+    }
+  },
+  "enabled_plugins": [
+    "test",
+    "example",
+    "datetime_plugin"
+  ]
+}

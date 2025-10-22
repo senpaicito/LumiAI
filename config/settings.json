@@ -1,0 +1,33 @@
+{
+  "ollama": {
+    "base_url": "http://localhost:11434",
+    "model": "hf.co/mradermacher/L3.1-Dark-Reasoning-LewdPlay-evo-Hermes-R1-Uncensored-8B-i1-GGUF:Q6_K",
+    "temperature": 0.7,
+    "max_tokens": 2048
+  },
+  "discord": {
+    "token": "YOUR_DISCORD_BOT_TOKEN_HERE",
+    "command_prefix": "!",
+    "enabled": true
+  },
+  "vtube_studio": {
+    "websocket_url": "ws://localhost:8001",
+    "token": "YOUR_VTS_TOKEN_HERE",
+    "enabled": true
+  },
+  "web_interface": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false
+  },
+  "audio": {
+    "sample_rate": 22050,
+    "chunk_size": 1024,
+    "tts_voice": "en_US-lessac-medium.onnx",
+    "stt_model": "base"
+  },
+  "plugins": {
+    "auto_load": true,
+    "scan_interval": 30
+  }
+}

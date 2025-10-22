@@ -15,7 +15,8 @@ class DashboardManager:
             "emotion_timeline": deque(maxlen=100),
             "relationship_progress": {},
             "memory_stats": {},
-            "user_engagement": defaultdict(int)
+            "user_engagement": defaultdict(int),
+            "plugin_metrics": []  # NEW: Store plugin metrics
         }
         
     async def update_dashboard_data(self, interaction_data):
@@ -50,6 +51,11 @@ class DashboardManager:
             self.dashboard_data["relationship_progress"] = stats.get("relationship", {})
             self.dashboard_data["memory_stats"] = stats.get("memory_system", {})
             
+            # Update plugin metrics if available
+            if self.ai_engine.plugin_manager:
+                plugin_metrics = await self.ai_engine.plugin_manager.dispatch_dashboard_update()
+                self.dashboard_data["plugin_metrics"] = plugin_metrics
+            
             self.logger.debug("Dashboard data updated")
             
         except Exception as e:
@@ -73,6 +79,11 @@ class DashboardManager:
             else:
                 messages_per_minute = 0
             
+            # Get plugin information if available
+            plugin_info = []
+            if self.ai_engine.plugin_manager:
+                plugin_info = self.ai_engine.plugin_manager.get_plugin_info()
+            
             return {
                 "conversation_metrics": dict(self.dashboard_data["conversation_metrics"]),
                 "emotion_distribution": dict(emotion_counts),
@@ -80,6 +91,8 @@ class DashboardManager:
                 "user_engagement": dict(self.dashboard_data["user_engagement"]),
                 "relationship_progress": self.dashboard_data["relationship_progress"],
                 "memory_stats": self.dashboard_data["memory_stats"],
+                "plugin_metrics": self.dashboard_data["plugin_metrics"],  # Include plugin metrics
+                "plugin_info": plugin_info,  # Include plugin status info
                 "conversation_pace": messages_per_minute,
                 "interaction_quality": await self._calculate_interaction_quality()
             }
@@ -121,9 +134,16 @@ class DashboardManager:
             word_density = min(1.0, engagement.get("avg_words_per_message", 0) / 20)  # Normalize
             emotion_diversity = len(set(e["emotion"] for e in self.dashboard_data["emotion_timeline"])) / 8
             
-            quality_score = (message_balance * 0.4 + word_density * 0.3 + emotion_diversity * 0.3) * 100
+            # Plugin activity bonus (if plugins are active and contributing)
+            plugin_bonus = 0.0
+            if self.dashboard_data["plugin_metrics"]:
+                active_plugins = len(self.dashboard_data["plugin_metrics"])
+                plugin_bonus = min(0.2, active_plugins * 0.05)  # Max 20% bonus
             
-            return round(quality_score, 1)
+            quality_score = (message_balance * 0.4 + word_density * 0.3 + emotion_diversity * 0.3) * 100
+            quality_score += plugin_bonus * 100
+            
+            return min(100, round(quality_score, 1))
             
         except Exception as e:
             self.logger.error(f"Error calculating interaction quality: {e}")
@@ -150,7 +170,8 @@ class DashboardManager:
                     "value": metrics["interaction_quality"],
                     "max": 100,
                     "label": "Interaction Quality"
-                }
+                },
+                "plugin_activity": self._format_plugin_metrics(metrics.get("plugin_metrics", []))
             }
             
             return chart_data
@@ -158,3 +179,22 @@ class DashboardManager:
         except Exception as e:
             self.logger.error(f"Error getting visualization data: {e}")
             return {}
+    
+    def _format_plugin_metrics(self, plugin_metrics):
+        """Format plugin metrics for visualization"""
+        if not plugin_metrics:
+            return {}
+        
+        formatted = {
+            "active_plugins": len(plugin_metrics),
+            "plugin_data": []
+        }
+        
+        for metric in plugin_metrics:
+            plugin_name = metric.get('plugin', 'Unknown')
+            formatted["plugin_data"].append({
+                "name": plugin_name,
+                "metrics": {k: v for k, v in metric.items() if k != 'plugin'}
+            })
+        
+        return formatted
