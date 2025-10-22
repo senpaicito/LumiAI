@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumi AI Companion</title>
+    
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables for Theme System */
+        :root {
+            --primary-color: #4facfe;
+            --secondary-color: #00f2fe;
+            --accent-color: #667eea;
+            --background-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --header-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --card-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: var(--transition);
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+            grid-template-areas: 
+                "header header"
+                "chat live2d";
+        }
+        
+        /* Header Section */
+        .header {
+            grid-area: header;
+            background: var(--header-gradient);
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .header-content h1 {
+            font-size: 2.2em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        .header-content .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .theme-selector, .dashboard-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+        
+        .theme-selector:hover, .dashboard-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Chat Section */
+        .chat-section {
+            grid-area: chat;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeInLeft 0.8s ease;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--background-color);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: slideInUp 0.5s ease;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .ai-message {
+            justify-content: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            word-wrap: break-word;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .user-bubble {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-bubble {
+            background: var(--surface-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .message-actions {
+            position: absolute;
+            top: -25px;
+            right: 10px;
+            display: none;
+            gap: 5px;
+        }
+        
+        .message:hover .message-actions {
+            display: flex;
+        }
+        
+        .message-action {
+            background: var(--accent-color);
+            border: none;
+            padding: 5px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: var(--transition);
+        }
+        
+        .message-action:hover {
+            transform: scale(1.1);
+        }
+        
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background: var(--surface-color);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        #message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 25px;
+            outline: none;
+            font-size: 1em;
+            background: var(--background-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        #message-input:focus {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        #send-button {
+            padding: 15px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #send-button:hover:not(:disabled) {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        
+        #send-button:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        /* Live2D Section */
+        .live2d-section {
+            grid-area: live2d;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeInRight 0.8s ease;
+        }
+        
+        .live2d-display {
+            flex: 1;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        #live2d-frame {
+            width: 100%;
+            height: 300px;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--primary-color);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        #live2d-frame:hover {
+            transform: scale(1.02);
+        }
+        
+        #live2d-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: calc(var(--border-radius) - 3px);
+        }
+        
+        .emotion-controls {
+            padding: 20px;
+            background: var(--surface-color);
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .emotion-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .emotion-btn {
+            padding: 10px 15px;
+            background: var(--background-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9em;
+        }
+        
+        .emotion-btn:hover, .emotion-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Dashboard Panel */
+        .dashboard-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--surface-color);
+            box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .dashboard-panel.open {
+            right: 0;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .dashboard-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .dashboard-close:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+        
+        .metric-card {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-title {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin: 15px 0;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            background: var(--surface-color);
+            margin: 10px;
+            border-radius: var(--border-radius);
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action {
+            padding: 8px 15px;
+            background: var(--background-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8em;
+        }
+        
+        .quick-action:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Theme Selector Dropdown */
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 15px;
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            z-index: 100;
+            min-width: 200px;
+        }
+        
+        .theme-selector:hover .theme-dropdown {
+            display: grid;
+        }
+        
+        .theme-option {
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+                grid-template-areas: 
+                    "header"
+                    "live2d"
+                    "chat";
+                height: auto;
+                min-height: calc(100vh - 20px);
+            }
+            
+            .live2d-section {
+                margin-bottom: 20px;
+            }
+            
+            .header-content h1 {
+                font-size: 1.8em;
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+            }
+            
+            #live2d-frame {
+                height: 250px;
+            }
+            
+            .dashboard-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .theme-dropdown {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .header-content h1 {
+                font-size: 1.5em;
+            }
+            
+            .chat-container {
+                padding: 15px;
+            }
+            
+            .input-container {
+                padding: 15px;
+            }
+            
+            .live2d-display {
+                padding: 15px;
+            }
+            
+            .emotion-controls {
+                padding: 15px;
+            }
+            
+            .emotion-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+        }
+        
+        /* Dark mode adjustments */
+        .dark-mode {
+            --background-color: #1a1a1a;
+            --surface-color: #2d2d2d;
+            --text-color: #ffffff;
+            --text-secondary: #a0a0a0;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1>Lumi AI Companion</h1>
+                <div class="subtitle">Your emotionally intelligent AI friend</div>
+            </div>
+            <div class="header-controls">
+                <div class="theme-selector">
+                    <i class="fas fa-palette"></i> Themes
+                    <div class="theme-dropdown" id="theme-dropdown">
+                        <!-- Themes will be populated by JavaScript -->
+                    </div>
+                </div>
+                <button class="dashboard-toggle" id="dashboard-toggle">
+                    <i class="fas fa-chart-bar"></i> Dashboard
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-container" id="chat-container">
+                <div class="message ai-message">
+                    <div class="message-bubble ai-bubble">
+                        <div class="message-actions">
+                            <button class="message-action" title="Like"><i class="fas fa-heart"></i></button>
+                            <button class="message-action" title="Save"><i class="fas fa-bookmark"></i></button>
+                        </div>
+                        Hello! I'm Lumi, now with enhanced features including themes, analytics dashboard, and much more! How can I assist you today?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <i class="fas fa-robot"></i> Lumi is thinking...
+            </div>
+            
+            <div class="input-container">
+                <div class="quick-actions">
+                    <button class="quick-action" data-message="How are you feeling?">Mood Check</button>
+                    <button class="quick-action" data-message="Tell me about yourself">About You</button>
+                    <button class="quick-action" data-message="Show me my stats">My Stats</button>
+                    <button class="quick-action" data-message="What's new?">What's New</button>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="message-input" placeholder="Type your message here..." autocomplete="off">
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live2D Section -->
+        <div class="live2d-section">
+            <div class="live2d-display">
+                <div id="live2d-frame">
+                    <div style="color: var(--text-secondary); text-align: center;">
+                        <div style="font-size: 1.2em; margin-bottom: 10px;"><i class="fas fa-robot"></i> Live2D Model</div>
+                        <div style="font-size: 0.9em;">Enhanced Streaming Active</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="emotion-controls">
+                <div class="emotion-buttons">
+                    <button class="emotion-btn" data-emotion="happy"><i class="fas fa-smile"></i> Happy</button>
+                    <button class="emotion-btn" data-emotion="curious"><i class="fas fa-question"></i> Curious</button>
+                    <button class="emotion-btn" data-emotion="excited"><i class="fas fa-star"></i> Excited</button>
+                    <button class="emotion-btn" data-emotion="thoughtful"><i class="fas fa-brain"></i> Thoughtful</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Panel -->
+    <div class="dashboard-panel" id="dashboard-panel">
+        <div class="dashboard-header">
+            <h2><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+            <button class="dashboard-close" id="dashboard-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="metric-grid" id="metric-grid">
+            <!-- Metrics will be populated by JavaScript -->
+        </div>
+        
+        <div class="chart-container" id="emotion-chart">
+            <!-- Chart will be rendered here -->
+        </div>
+        
+        <div class="chart-container" id="engagement-chart">
+            <!-- Chart will be rendered here -->
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.js"></script>
+
+    <script>
+        // Enhanced Lumi Universal App with new features
+        class LumiEnhancedApp {
+            constructor() {
+                this.socket = io();
+                this.currentTheme = 'default';
+                this.dashboardOpen = false;
+                this.charts = {};
+                this.setupEventListeners();
+                this.setupSocketHandlers();
+                this.loadThemes();
+                this.startLive2DStreaming();
+                this.initializeCharts();
+            }
+            
+            setupEventListeners() {
+                // Message input
+                const messageInput = document.getElementById('message-input');
+                const sendButton = document.getElementById('send-button');
+                const chatContainer = document.getElementById('chat-container');
+                
+                sendButton.addEventListener('click', () => this.sendMessage());
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+                
+                // Emotion buttons
+                document.querySelectorAll('.emotion-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const emotion = e.target.getAttribute('data-emotion');
+                        this.updateEmotion(emotion);
+                        document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    });
+                });
+                
+                // Quick actions
+                document.querySelectorAll('.quick-action').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const message = e.target.getAttribute('data-message');
+                        document.getElementById('message-input').value = message;
+                        this.sendMessage();
+                    });
+                });
+                
+                // Dashboard
+                document.getElementById('dashboard-toggle').addEventListener('click', () => this.toggleDashboard());
+                document.getElementById('dashboard-close').addEventListener('click', () => this.toggleDashboard());
+                
+                // Message actions
+                this.setupMessageActions();
+                
+                // Auto-scroll
+                const observer = new MutationObserver(() => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+                observer.observe(chatContainer, { childList: true });
+            }
+            
+            setupSocketHandlers() {
+                this.socket.on('connected', (data) => {
+                    this.updateStatus('Connected');
+                });
+                
+                this.socket.on('chat_response', (data) => {
+                    this.hideTyping();
+                    this.addMessage(data.response, 'ai');
+                });
+                
+                this.socket.on('chat_error', (data) => {
+                    this.hideTyping();
+                    this.addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+                });
+                
+                this.socket.on('live2d_frame', (data) => {
+                    this.updateLive2DFrame(data.frame);
+                });
+                
+                this.socket.on('emotion_updated', (data) => {
+                    this.updateEmotionUI(data.emotion);
+                });
+                
+                this.socket.on('theme_changed', (data) => {
+                    this.applyThemeCSS(data.theme_css);
+                    this.currentTheme = data.theme;
+                });
+                
+                this.socket.on('dashboard_data', (data) => {
+                    this.updateDashboard(data);
+                });
+                
+                this.socket.on('dashboard_update', (data) => {
+                    this.updateDashboard(data);
+                });
+            }
+            
+            setupMessageActions() {
+                // Message action handlers would go here
+                // Like/save functionality
+            }
+            
+            async loadThemes() {
+                try {
+                    const response = await fetch('/api/themes');
+                    const data = await response.json();
+                    this.populateThemeDropdown(data.themes, data.current_theme);
+                    this.applyThemeCSS(data.theme_css);
+                    this.currentTheme = data.current_theme;
+                } catch (error) {
+                    console.error('Error loading themes:', error);
+                }
+            }
+            
+            populateThemeDropdown(themes, currentTheme) {
+                const dropdown = document.getElementById('theme-dropdown');
+                dropdown.innerHTML = '';
+                
+                Object.entries(themes).forEach(([key, theme]) => {
+                    const themeOption = document.createElement('div');
+                    themeOption.className = `theme-option ${key === currentTheme ? 'active' : ''}`;
+                    themeOption.style.background = theme.colors?.primary || '#4facfe';
+                    themeOption.style.color = 'white';
+                    themeOption.textContent = theme.name;
+                    themeOption.addEventListener('click', () => this.changeTheme(key));
+                    dropdown.appendChild(themeOption);
+                });
+            }
+            
+            async changeTheme(themeName) {
+                try {
+                    const response = await fetch(`/api/themes/${themeName}`, { method: 'POST' });
+                    const data = await response.json();
+                    if (data.success) {
+                        this.applyThemeCSS(data.theme_css);
+                        this.currentTheme = themeName;
+                        this.socket.emit('change_theme', { theme: themeName });
+                    }
+                } catch (error) {
+                    console.error('Error changing theme:', error);
+                }
+            }
+            
+            applyThemeCSS(css) {
+                let style = document.getElementById('dynamic-theme');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'dynamic-theme';
+                    document.head.appendChild(style);
+                }
+                style.textContent = css;
+            }
+            
+            toggleDashboard() {
+                const panel = document.getElementById('dashboard-panel');
+                this.dashboardOpen = !this.dashboardOpen;
+                panel.classList.toggle('open', this.dashboardOpen);
+                
+                if (this.dashboardOpen) {
+                    this.socket.emit('request_dashboard_data');
+                }
+            }
+            
+            initializeCharts() {
+                // Initialize Chart.js instances
+                this.charts.emotion = new Chart(document.getElementById('emotion-chart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Happy', 'Curious', 'Thoughtful', 'Neutral'],
+                        datasets: [{
+                            data: [25, 25, 25, 25],
+                            backgroundColor: ['#4facfe', '#00f2fe', '#667eea', '#764ba2']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Emotion Distribution'
+                            }
+                        }
+                    }
+                });
+                
+                this.charts.engagement = new Chart(document.getElementById('engagement-chart'), {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Interaction Quality',
+                            data: [],
+                            borderColor: '#4facfe',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Engagement Over Time'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateDashboard(data) {
+                if (!this.dashboardOpen) return;
+                
+                // Update metrics grid
+                const metricGrid = document.getElementById('metric-grid');
+                metricGrid.innerHTML = `
+                    <div class="metric-card">
+                        <div class="metric-title">Total Messages</div>
+                        <div class="metric-value">${data.conversation_metrics?.total_messages || 0}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Interaction Quality</div>
+                        <div class="metric-value">${data.interaction_quality || 0}%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Avg Words/Message</div>
+                        <div class="metric-value">${Math.round(data.user_engagement?.avg_words_per_message || 0)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Relationship Level</div>
+                        <div class="metric-value">${data.relationship_progress?.familiarity_level ? Math.round(data.relationship_progress.familiarity_level * 100) : 0}%</div>
+                    </div>
+                `;
+                
+                // Update charts
+                if (data.visualizations) {
+                    this.updateCharts(data.visualizations);
+                }
+            }
+            
+            updateCharts(vizData) {
+                if (vizData.emotion_pie) {
+                    this.charts.emotion.data.labels = vizData.emotion_pie.labels;
+                    this.charts.emotion.data.datasets[0].data = vizData.emotion_pie.data;
+                    this.charts.emotion.data.datasets[0].backgroundColor = vizData.emotion_pie.colors;
+                    this.charts.emotion.update();
+                }
+            }
+            
+            sendMessage() {
+                const messageInput = document.getElementById('message-input');
+                const message = messageInput.value.trim();
+                
+                if (!message) return;
+                
+                this.addMessage(message, 'user');
+                messageInput.value = '';
+                this.showTyping();
+                
+                this.socket.emit('chat_message', { message: message });
+            }
+            
+            addMessage(text, sender) {
+                const chatContainer = document.getElementById('chat-container');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message animate__animated animate__fadeInUp`;
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = `message-bubble ${sender}-bubble`;
+                
+                if (sender === 'ai') {
+                    bubbleDiv.innerHTML = `
+                        <div class="message-actions">
+                            <button class="message-action" title="Like"><i class="fas fa-heart"></i></button>
+                            <button class="message-action" title="Save"><i class="fas fa-bookmark"></i></button>
+                        </div>
+                        ${text}
+                    `;
+                } else {
+                    bubbleDiv.textContent = text;
+                }
+                
+                messageDiv.appendChild(bubbleDiv);
+                chatContainer.appendChild(messageDiv);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            showTyping() {
+                document.getElementById('typing-indicator').style.display = 'block';
+            }
+            
+            hideTyping() {
+                document.getElementById('typing-indicator').style.display = 'none';
+            }
+            
+            updateStatus(status) {
+                // Update status display
+            }
+            
+            startLive2DStreaming() {
+                this.live2dSocket = io('/live2d');
+                this.live2dSocket.on('live2d_frame', (data) => {
+                    this.updateLive2DFrame(data.frame);
+                });
+                this.live2dSocket.emit('start_live2d_stream');
+            }
+            
+            updateLive2DFrame(frameData) {
+                const live2dFrame = document.getElementById('live2d-frame');
+                live2dFrame.innerHTML = `<img src="${frameData}" alt="Live2D Model" style="width: 100%; height: 100%; object-fit: contain;">`;
+            }
+            
+            updateEmotion(emotion) {
+                this.socket.emit('update_emotion', { emotion: emotion });
+            }
+            
+            updateEmotionUI(emotion) {
+                document.querySelectorAll('.emotion-btn').forEach(btn => {
+                    if (btn.getAttribute('data-emotion') === emotion) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        // Initialize the enhanced app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.lumiApp = new LumiEnhancedApp();
+        });
+    </script>
+</body>
+</html>
