@@ -1,0 +1,70 @@
+{
+  "default": {
+    "name": "Ocean Blue",
+    "colors": {
+      "primary": "#4facfe",
+      "secondary": "#00f2fe",
+      "accent": "#667eea",
+      "background": "#f8f9fa",
+      "surface": "#ffffff",
+      "text": "#333333",
+      "text_secondary": "#666666"
+    },
+    "gradients": {
+      "header": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+      "card": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "accent": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+    }
+  },
+  "dark": {
+    "name": "Midnight Dark",
+    "colors": {
+      "primary": "#6366f1",
+      "secondary": "#8b5cf6",
+      "accent": "#ec4899",
+      "background": "#1a1a1a",
+      "surface": "#2d2d2d",
+      "text": "#ffffff",
+      "text_secondary": "#a0a0a0"
+    },
+    "gradients": {
+      "header": "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+      "card": "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
+      "accent": "linear-gradient(135deg, #ec4899 0%, #f59e0b 100%)"
+    }
+  },
+  "nature": {
+    "name": "Forest Nature",
+    "colors": {
+      "primary": "#10b981",
+      "secondary": "#059669",
+      "accent": "#f59e0b",
+      "background": "#f0fdf4",
+      "surface": "#ffffff",
+      "text": "#1c1917",
+      "text_secondary": "#57534e"
+    },
+    "gradients": {
+      "header": "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+      "card": "linear-gradient(135deg, #86efac 0%, #4ade80 100%)",
+      "accent": "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+    }
+  },
+  "sunset": {
+    "name": "Sunset Orange",
+    "colors": {
+      "primary": "#f97316",
+      "secondary": "#ea580c",
+      "accent": "#dc2626",
+      "background": "#fff7ed",
+      "surface": "#ffffff",
+      "text": "#431407",
+      "text_secondary": "#78350f"
+    },
+    "gradients": {
+      "header": "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+      "card": "linear-gradient(135deg, #fdba74 0%, #fb923c 100%)",
+      "accent": "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)"
+    }
+  }
+}
