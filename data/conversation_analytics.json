@@ -1,0 +1,25 @@
+{
+  "conversation_stats": {
+    "total_conversations": 7,
+    "total_user_words": 26,
+    "total_ai_words": 49,
+    "average_user_words": 3.7142857142857144,
+    "average_ai_words": 7.0,
+    "daily_stats": {
+      "2025-10-21": {
+        "conversations": 7,
+        "words": 75
+      }
+    }
+  },
+  "topic_analysis": {},
+  "interaction_patterns": {
+    "brief_exchanges": 7,
+    "conversations_afternoon": 7,
+    "user_questions": 2
+  },
+  "engagement_metrics": {
+    "neutral_engagements": 7,
+    "low_engagement": 7
+  }
+}
