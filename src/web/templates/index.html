@@ -86,7 +86,7 @@
             align-items: center;
         }
         
-        .theme-selector, .dashboard-toggle {
+        .theme-selector, .dashboard-toggle, .settings-toggle {
             background: rgba(255,255,255,0.2);
             border: none;
             padding: 10px 15px;
@@ -97,7 +97,7 @@
             backdrop-filter: blur(10px);
         }
         
-        .theme-selector:hover, .dashboard-toggle:hover {
+        .theme-selector:hover, .dashboard-toggle:hover, .settings-toggle:hover {
             background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
         }
@@ -333,7 +333,7 @@
         
         .dashboard-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
@@ -352,6 +352,40 @@
         .dashboard-close:hover {
             color: var(--primary-color);
             transform: rotate(90deg);
+        }
+        
+        .dashboard-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+        
+        .dashboard-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .dashboard-tab:hover {
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .metric-card {
@@ -452,6 +486,273 @@
             transform: scale(1.05);
         }
         
+        /* Configuration Styles */
+        .config-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--background-color);
+            border-radius: var(--border-radius);
+        }
+        
+        .config-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+        }
+        
+        .config-group {
+            margin-bottom: 15px;
+        }
+        
+        .config-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .config-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background: var(--surface-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .config-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .config-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .config-checkbox {
+            margin-right: 8px;
+        }
+        
+        .config-description {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
+        .config-save-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .config-save-btn:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        
+        .config-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Plugin Management Styles */
+        .plugin-section {
+            margin-top: 30px;
+        }
+        
+        .plugin-item {
+            background: var(--surface-color);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+        
+        .plugin-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .plugin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .plugin-name {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.1em;
+        }
+        
+        .plugin-version {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+        }
+        
+        .plugin-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .plugin-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .plugin-enabled {
+            background: #10b981;
+            color: white;
+        }
+        
+        .plugin-disabled {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .plugin-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .plugin-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .plugin-enable {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .plugin-disable {
+            background: var(--text-secondary);
+            color: white;
+        }
+        
+        .plugin-config {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .plugin-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .plugin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .plugin-metrics {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--background-color);
+            border-radius: 8px;
+            font-size: 0.8em;
+        }
+        
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+        }
+        
+        .metric-value {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .modal-content {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
         /* Animations */
         @keyframes pulse {
             0% { opacity: 0.6; }
@@ -544,6 +845,11 @@
             .theme-dropdown {
                 grid-template-columns: 1fr;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
         }
         
         /* Small mobile devices */
@@ -621,6 +927,9 @@
                         <!-- Themes will be populated by JavaScript -->
                     </div>
                 </div>
+                <button class="settings-toggle" id="settings-toggle">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
                 <button class="dashboard-toggle" id="dashboard-toggle">
                     <i class="fas fa-chart-bar"></i> Dashboard
                 </button>
@@ -636,7 +945,7 @@
                             <button class="message-action" title="Like"><i class="fas fa-heart"></i></button>
                             <button class="message-action" title="Save"><i class="fas fa-bookmark"></i></button>
                         </div>
-                        Hello! I'm Lumi, now with enhanced features including themes, analytics dashboard, and much more! How can I assist you today?
+                        Hello! I'm Lumi, now with enhanced features including themes, analytics dashboard, plugin system, configuration management, and much more! How can I assist you today?
                     </div>
                 </div>
             </div>
@@ -686,22 +995,192 @@
     <!-- Dashboard Panel -->
     <div class="dashboard-panel" id="dashboard-panel">
         <div class="dashboard-header">
-            <h2><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+            <h2><i class="fas fa-chart-bar"></i> Control Panel</h2>
             <button class="dashboard-close" id="dashboard-close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         
-        <div class="metric-grid" id="metric-grid">
-            <!-- Metrics will be populated by JavaScript -->
+        <div class="dashboard-tabs">
+            <button class="dashboard-tab active" data-tab="analytics">Analytics</button>
+            <button class="dashboard-tab" data-tab="plugins">Plugins</button>
+            <button class="dashboard-tab" data-tab="configuration">Configuration</button>
         </div>
         
-        <div class="chart-container" id="emotion-chart">
-            <!-- Chart will be rendered here -->
+        <!-- Analytics Tab -->
+        <div class="tab-content active" id="analytics-tab">
+            <div class="metric-grid" id="metric-grid">
+                <!-- Metrics will be populated by JavaScript -->
+            </div>
+            
+            <div class="chart-container" id="emotion-chart">
+                <!-- Chart will be rendered here -->
+            </div>
+            
+            <div class="chart-container" id="engagement-chart">
+                <!-- Chart will be rendered here -->
+            </div>
         </div>
         
-        <div class="chart-container" id="engagement-chart">
-            <!-- Chart will be rendered here -->
+        <!-- Plugins Tab -->
+        <div class="tab-content" id="plugins-tab">
+            <div class="plugin-section">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">
+                    <i class="fas fa-puzzle-piece"></i> Plugin Manager
+                </h3>
+                
+                <!-- Plugin Status Summary -->
+                <div class="metric-card" style="background: var(--accent-gradient);">
+                    <div class="metric-title">Plugin System</div>
+                    <div class="metric-value" id="plugin-summary">Loading...</div>
+                    <div style="font-size: 0.8em; color: var(--text-secondary); margin-top: 5px;">
+                        <span id="enabled-plugins">0 enabled</span> • <span id="total-plugins">0 total</span>
+                    </div>
+                </div>
+                
+                <!-- Plugin List -->
+                <div class="plugin-list" id="plugin-list" style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+                    <!-- Plugins will be populated by JavaScript -->
+                </div>
+                
+                <!-- Plugin Controls -->
+                <div class="quick-actions" style="margin-top: 15px;">
+                    <button class="quick-action" id="refresh-plugins">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="quick-action" id="reload-all-plugins">
+                        <i class="fas fa-redo"></i> Reload All
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Configuration Tab -->
+        <div class="tab-content" id="configuration-tab">
+            <div class="config-section">
+                <h3><i class="fas fa-brain"></i> AI Configuration</h3>
+                
+                <div class="config-group">
+                    <label class="config-label" for="ollama-model">Ollama Model</label>
+                    <input type="text" class="config-input" id="ollama-model" placeholder="e.g., llama2">
+                    <div class="config-description">The AI model used for generating responses</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="ollama-base-url">Ollama Base URL</label>
+                    <input type="text" class="config-input" id="ollama-base-url" placeholder="http://localhost:11434">
+                    <div class="config-description">URL where Ollama is running</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="ollama-temperature">Temperature</label>
+                    <input type="number" class="config-input" id="ollama-temperature" step="0.1" min="0" max="2">
+                    <div class="config-description">Controls randomness (0 = deterministic, 2 = very random)</div>
+                </div>
+            </div>
+            
+            <div class="config-section">
+                <h3><i class="fab fa-discord"></i> Discord Integration</h3>
+                
+                <div class="config-group">
+                    <label class="config-label">
+                        <input type="checkbox" class="config-checkbox" id="discord-enabled">
+                        Enable Discord Bot
+                    </label>
+                    <div class="config-description">Enable or disable the Discord bot integration</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="discord-token">Discord Bot Token</label>
+                    <input type="password" class="config-input" id="discord-token" placeholder="Your Discord bot token">
+                    <div class="config-description">Token for your Discord bot application</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="discord-prefix">Command Prefix</label>
+                    <input type="text" class="config-input" id="discord-prefix" placeholder="!">
+                    <div class="config-description">Prefix for Discord commands</div>
+                </div>
+            </div>
+            
+            <div class="config-section">
+                <h3><i class="fas fa-desktop"></i> VTube Studio</h3>
+                
+                <div class="config-group">
+                    <label class="config-label">
+                        <input type="checkbox" class="config-checkbox" id="vts-enabled">
+                        Enable VTube Studio
+                    </label>
+                    <div class="config-description">Enable or disable VTube Studio integration</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="vts-websocket-url">WebSocket URL</label>
+                    <input type="text" class="config-input" id="vts-websocket-url" placeholder="ws://localhost:8001">
+                    <div class="config-description">VTube Studio WebSocket URL</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="vts-token">API Token</label>
+                    <input type="password" class="config-input" id="vts-token" placeholder="Your VTS token">
+                    <div class="config-description">VTube Studio API token (if required)</div>
+                </div>
+            </div>
+            
+            <div class="config-section">
+                <h3><i class="fas fa-plug"></i> Plugin System</h3>
+                
+                <div class="config-group">
+                    <label class="config-label">
+                        <input type="checkbox" class="config-checkbox" id="plugins-auto-load">
+                        Auto-load Plugins
+                    </label>
+                    <div class="config-description">Automatically load plugins on startup</div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="plugins-scan-interval">Scan Interval (seconds)</label>
+                    <input type="number" class="config-input" id="plugins-scan-interval" min="10" max="300">
+                    <div class="config-description">How often to scan for new plugins</div>
+                </div>
+            </div>
+            
+            <div class="config-actions">
+                <button class="config-save-btn" id="save-config">
+                    <i class="fas fa-save"></i> Save Configuration
+                </button>
+                <button class="quick-action" id="reset-config">
+                    <i class="fas fa-undo"></i> Reset to Defaults
+                </button>
+                <button class="quick-action" id="reload-config">
+                    <i class="fas fa-sync"></i> Reload from File
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plugin Configuration Modal -->
+    <div class="modal-overlay" id="plugin-config-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Plugin Configuration</h3>
+                <button class="modal-close" id="plugin-config-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="plugin-config-content">
+                    <!-- Plugin configuration will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="config-save-btn" id="save-plugin-config">
+                    <i class="fas fa-save"></i> Save Configuration
+                </button>
+                <button class="quick-action" id="close-plugin-config">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
 
@@ -717,12 +1196,18 @@
                 this.socket = io();
                 this.currentTheme = 'default';
                 this.dashboardOpen = false;
+                this.currentTab = 'analytics';
                 this.charts = {};
+                this.config = {};
+                this.currentPluginConfig = null;
                 this.setupEventListeners();
                 this.setupSocketHandlers();
+                this.setupPluginHandlers();
+                this.setupConfigHandlers();
                 this.loadThemes();
                 this.startLive2DStreaming();
                 this.initializeCharts();
+                this.loadConfiguration();
             }
             
             setupEventListeners() {
@@ -759,6 +1244,14 @@
                 document.getElementById('dashboard-toggle').addEventListener('click', () => this.toggleDashboard());
                 document.getElementById('dashboard-close').addEventListener('click', () => this.toggleDashboard());
                 
+                // Dashboard tabs
+                document.querySelectorAll('.dashboard-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabName = e.target.getAttribute('data-tab');
+                        this.switchTab(tabName);
+                    });
+                });
+                
                 // Message actions
                 this.setupMessageActions();
                 
@@ -767,6 +1260,57 @@
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 });
                 observer.observe(chatContainer, { childList: true });
+            }
+
+            setupPluginHandlers() {
+                // Refresh plugins button
+                document.getElementById('refresh-plugins').addEventListener('click', () => {
+                    this.loadPlugins();
+                });
+                
+                // Reload all plugins button
+                document.getElementById('reload-all-plugins').addEventListener('click', () => {
+                    this.reloadAllPlugins();
+                });
+
+                // Plugin configuration modal
+                document.getElementById('plugin-config-close').addEventListener('click', () => {
+                    this.closePluginConfig();
+                });
+                
+                document.getElementById('close-plugin-config').addEventListener('click', () => {
+                    this.closePluginConfig();
+                });
+                
+                document.getElementById('save-plugin-config').addEventListener('click', () => {
+                    this.savePluginConfig();
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('plugin-config-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'plugin-config-modal') {
+                        this.closePluginConfig();
+                    }
+                });
+            }
+
+            setupConfigHandlers() {
+                // Save configuration
+                document.getElementById('save-config').addEventListener('click', () => {
+                    this.saveConfiguration();
+                });
+                
+                // Reset configuration
+                document.getElementById('reset-config').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to reset all configuration to defaults?')) {
+                        this.resetConfiguration();
+                    }
+                });
+                
+                // Reload configuration
+                document.getElementById('reload-config').addEventListener('click', () => {
+                    this.loadConfiguration();
+                });
             }
             
             setupSocketHandlers() {
@@ -804,11 +1348,216 @@
                 this.socket.on('dashboard_update', (data) => {
                     this.updateDashboard(data);
                 });
+
+                // Plugin Socket Events
+                this.socket.on('plugin_list', (data) => {
+                    this.updatePluginList(data.plugins);
+                });
+                
+                this.socket.on('plugin_enabled', (data) => {
+                    this.updatePluginList(data.plugins);
+                    this.showNotification(`Plugin ${data.plugin_name} enabled`, 'success');
+                });
+                
+                this.socket.on('plugin_disabled', (data) => {
+                    this.updatePluginList(data.plugins);
+                    this.showNotification(`Plugin ${data.plugin_name} disabled`, 'info');
+                });
+                
+                this.socket.on('plugin_error', (data) => {
+                    this.showNotification(`Plugin error: ${data.error}`, 'error');
+                });
+                
+                this.socket.on('plugin_status', (data) => {
+                    this.updatePluginList(data.plugins);
+                });
+
+                // Configuration Socket Events
+                this.socket.on('config_data', (data) => {
+                    this.config = data.config;
+                    this.populateConfigurationForm();
+                });
+                
+                this.socket.on('config_updated', (data) => {
+                    this.showNotification(`Configuration updated: ${data.key}`, 'success');
+                    // Reload the configuration to get updated values
+                    this.loadConfiguration();
+                });
+                
+                this.socket.on('config_error', (data) => {
+                    this.showNotification(`Configuration error: ${data.error}`, 'error');
+                });
             }
             
             setupMessageActions() {
                 // Message action handlers would go here
                 // Like/save functionality
+            }
+
+            switchTab(tabName) {
+                // Update active tab
+                document.querySelectorAll('.dashboard-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                this.currentTab = tabName;
+                
+                // Load specific data for the tab
+                if (tabName === 'plugins') {
+                    this.loadPlugins();
+                } else if (tabName === 'configuration') {
+                    this.loadConfiguration();
+                }
+            }
+
+            loadConfiguration() {
+                this.socket.emit('get_config');
+            }
+
+            populateConfigurationForm() {
+                if (!this.config) return;
+
+                // AI Configuration
+                document.getElementById('ollama-model').value = this.config.ollama?.model || '';
+                document.getElementById('ollama-base-url').value = this.config.ollama?.base_url || '';
+                document.getElementById('ollama-temperature').value = this.config.ollama?.temperature || 0.7;
+
+                // Discord Configuration
+                document.getElementById('discord-enabled').checked = this.config.discord?.enabled || false;
+                document.getElementById('discord-token').value = this.config.discord?.token || '';
+                document.getElementById('discord-prefix').value = this.config.discord?.command_prefix || '!';
+
+                // VTube Studio Configuration
+                document.getElementById('vts-enabled').checked = this.config.vtube_studio?.enabled || false;
+                document.getElementById('vts-websocket-url').value = this.config.vtube_studio?.websocket_url || '';
+                document.getElementById('vts-token').value = this.config.vtube_studio?.token || '';
+
+                // Plugin System Configuration
+                document.getElementById('plugins-auto-load').checked = this.config.plugins?.auto_load || true;
+                document.getElementById('plugins-scan-interval').value = this.config.plugins?.scan_interval || 30;
+            }
+
+            saveConfiguration() {
+                const configUpdates = {
+                    ollama: {
+                        model: document.getElementById('ollama-model').value,
+                        base_url: document.getElementById('ollama-base-url').value,
+                        temperature: parseFloat(document.getElementById('ollama-temperature').value) || 0.7
+                    },
+                    discord: {
+                        enabled: document.getElementById('discord-enabled').checked,
+                        token: document.getElementById('discord-token').value,
+                        command_prefix: document.getElementById('discord-prefix').value
+                    },
+                    vtube_studio: {
+                        enabled: document.getElementById('vts-enabled').checked,
+                        websocket_url: document.getElementById('vts-websocket-url').value,
+                        token: document.getElementById('vts-token').value
+                    },
+                    plugins: {
+                        auto_load: document.getElementById('plugins-auto-load').checked,
+                        scan_interval: parseInt(document.getElementById('plugins-scan-interval').value) || 30
+                    }
+                };
+
+                // Send updates to server
+                for (const [section, values] of Object.entries(configUpdates)) {
+                    for (const [key, value] of Object.entries(values)) {
+                        this.socket.emit('update_config', {
+                            key: `${section}.${key}`,
+                            value: value
+                        });
+                    }
+                }
+
+                this.showNotification('Configuration saved successfully! Some changes may require restart.', 'success');
+            }
+
+            resetConfiguration() {
+                if (confirm('This will reset all settings to defaults. Continue?')) {
+                    // You would typically call a server endpoint to reset configuration
+                    this.showNotification('Configuration reset functionality coming soon!', 'info');
+                }
+            }
+
+            openPluginConfig(pluginName) {
+                this.currentPluginConfig = pluginName;
+                document.getElementById('plugin-config-modal').style.display = 'flex';
+                
+                // Load plugin configuration
+                this.loadPluginConfiguration(pluginName);
+            }
+
+            closePluginConfig() {
+                document.getElementById('plugin-config-modal').style.display = 'none';
+                this.currentPluginConfig = null;
+            }
+
+            loadPluginConfiguration(pluginName) {
+                // For now, create a simple configuration form
+                // In a real implementation, you would fetch the actual plugin configuration
+                const configContent = document.getElementById('plugin-config-content');
+                configContent.innerHTML = `
+                    <div class="config-section">
+                        <h3><i class="fas fa-cog"></i> ${pluginName} Settings</h3>
+                        
+                        <div class="config-group">
+                            <label class="config-label">
+                                <input type="checkbox" class="config-checkbox" id="plugin-enabled" checked>
+                                Enable Plugin
+                            </label>
+                            <div class="config-description">Enable or disable this plugin</div>
+                        </div>
+                        
+                        <div class="config-group">
+                            <label class="config-label" for="plugin-setting-1">Setting 1</label>
+                            <input type="text" class="config-input" id="plugin-setting-1" placeholder="Enter value">
+                            <div class="config-description">Example setting for ${pluginName}</div>
+                        </div>
+                        
+                        <div class="config-group">
+                            <label class="config-label" for="plugin-setting-2">Setting 2</label>
+                            <select class="config-input" id="plugin-setting-2">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                            </select>
+                            <div class="config-description">Another example setting</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            savePluginConfig() {
+                if (!this.currentPluginConfig) return;
+
+                // Get values from the form
+                const enabled = document.getElementById('plugin-enabled').checked;
+                const setting1 = document.getElementById('plugin-setting-1').value;
+                const setting2 = document.getElementById('plugin-setting-2').value;
+
+                // Save the configuration
+                const config = {
+                    enabled: enabled,
+                    settings: {
+                        setting1: setting1,
+                        setting2: setting2
+                    }
+                };
+
+                // Send to server
+                this.socket.emit('update_plugin_config', {
+                    plugin_name: this.currentPluginConfig,
+                    config: config
+                });
+
+                this.showNotification(`Configuration for ${this.currentPluginConfig} saved!`, 'success');
+                this.closePluginConfig();
             }
             
             async loadThemes() {
@@ -869,7 +1618,119 @@
                 
                 if (this.dashboardOpen) {
                     this.socket.emit('request_dashboard_data');
+                    if (this.currentTab === 'plugins') {
+                        this.loadPlugins();
+                    } else if (this.currentTab === 'configuration') {
+                        this.loadConfiguration();
+                    }
                 }
+            }
+
+            loadPlugins() {
+                this.socket.emit('get_plugins');
+            }
+
+            reloadAllPlugins() {
+                this.showNotification('Plugin reload functionality coming soon!', 'info');
+            }
+
+            updatePluginList(plugins) {
+                const pluginList = document.getElementById('plugin-list');
+                const pluginSummary = document.getElementById('plugin-summary');
+                const enabledPlugins = document.getElementById('enabled-plugins');
+                const totalPlugins = document.getElementById('total-plugins');
+                
+                if (!plugins || plugins.length === 0) {
+                    pluginList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No plugins loaded</div>';
+                    pluginSummary.textContent = 'No Plugins';
+                    enabledPlugins.textContent = '0 enabled';
+                    totalPlugins.textContent = '0 total';
+                    return;
+                }
+                
+                // Update summary
+                const enabledCount = plugins.filter(p => p.enabled).length;
+                pluginSummary.textContent = `${enabledCount}/${plugins.length} Active`;
+                enabledPlugins.textContent = `${enabledCount} enabled`;
+                totalPlugins.textContent = `${plugins.length} total`;
+                
+                // Update plugin list
+                pluginList.innerHTML = '';
+                plugins.forEach(plugin => {
+                    const pluginItem = document.createElement('div');
+                    pluginItem.className = 'plugin-item';
+                    
+                    pluginItem.innerHTML = `
+                        <div class="plugin-header">
+                            <div class="plugin-name">${plugin.name}</div>
+                            <div class="plugin-version">v${plugin.version}</div>
+                        </div>
+                        <div class="plugin-description">${plugin.description}</div>
+                        <div class="plugin-status ${plugin.enabled ? 'plugin-enabled' : 'plugin-disabled'}">
+                            ${plugin.enabled ? 'Enabled' : 'Disabled'}
+                        </div>
+                        <div class="plugin-actions">
+                            <button class="plugin-btn ${plugin.enabled ? 'plugin-disable' : 'plugin-enable'}" 
+                                    data-plugin="${plugin.name}">
+                                <i class="fas ${plugin.enabled ? 'fa-pause' : 'fa-play'}"></i>
+                                ${plugin.enabled ? 'Disable' : 'Enable'}
+                            </button>
+                            <button class="plugin-btn plugin-config" data-plugin="${plugin.name}">
+                                <i class="fas fa-cog"></i> Settings
+                            </button>
+                        </div>
+                    `;
+                    
+                    pluginList.appendChild(pluginItem);
+                });
+                
+                // Add event listeners to plugin buttons
+                document.querySelectorAll('.plugin-btn.plugin-enable, .plugin-btn.plugin-disable').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const pluginName = e.target.getAttribute('data-plugin') || e.target.closest('.plugin-btn').getAttribute('data-plugin');
+                        if (pluginName) {
+                            if (e.target.classList.contains('plugin-enable')) {
+                                this.socket.emit('enable_plugin', { plugin_name: pluginName });
+                            } else {
+                                this.socket.emit('disable_plugin', { plugin_name: pluginName });
+                            }
+                        }
+                    });
+                });
+                
+                // Add event listeners to config buttons
+                document.querySelectorAll('.plugin-btn.plugin-config').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const pluginName = e.target.getAttribute('data-plugin') || e.target.closest('.plugin-btn').getAttribute('data-plugin');
+                        this.openPluginConfig(pluginName);
+                    });
+                });
+            }
+            
+            showNotification(message, type = 'info') {
+                // Simple notification system
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                    color: white;
+                    border-radius: var(--border-radius);
+                    box-shadow: var(--shadow);
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOutRight 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
             }
             
             initializeCharts() {

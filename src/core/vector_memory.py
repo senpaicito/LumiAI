@@ -2,7 +2,7 @@ import chromadb
 import json
 import logging
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from sentence_transformers import SentenceTransformer
 from pathlib import Path
 from config import settings
@@ -63,17 +63,23 @@ class VectorMemory:
             if emotion is None:
                 emotion = self._detect_emotion_from_text(text)
             
-            # Prepare metadata
+            # Prepare metadata - ChromaDB requires simple types (no nested dicts)
             memory_metadata = {
                 "type": memory_type,
                 "timestamp": datetime.now().isoformat(),
-                "text": text,
                 "emotion": emotion,
                 "emotion_category": self._categorize_emotion(emotion)
             }
             
+            # Add simple metadata fields (no nested objects)
             if metadata:
-                memory_metadata.update(metadata)
+                # Flatten any nested dictionaries
+                for key, value in metadata.items():
+                    if isinstance(value, (str, int, float, bool)) or value is None:
+                        memory_metadata[key] = value
+                    else:
+                        # Convert complex objects to strings
+                        memory_metadata[key] = str(value)
             
             # Generate unique ID
             memory_id = f"memory_{datetime.now().timestamp()}"

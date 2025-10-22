@@ -37,15 +37,19 @@ class MemorySystem:
             
             # Store in vector memory for semantic search with emotion
             full_conversation = f"User: {user_input}\nLumi: {ai_response}"
+            
+            # Create simple metadata for ChromaDB
+            metadata = {
+                "user_input": user_input[:100],  # Limit length
+                "ai_response": ai_response[:100],  # Limit length
+                "context_summary": str(conversation_context)[:200] if conversation_context else "none"
+            }
+            
             await self.vector_memory.store_memory(
                 text=full_conversation,
                 memory_type="conversation",
-                metadata={
-                    "user_input": user_input,
-                    "ai_response": ai_response,
-                    "context": conversation_context or {}
-                },
-                emotion=emotion  # Pass the emotion for tagging
+                metadata=metadata,
+                emotion=emotion
             )
             
             # Extract and store key information
