@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plugin Hub - Lumi AI</title>
+    <!-- Your existing head content -->
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Plugin Hub</h1>
+        <p>Manage and interact with your plugins</p>
+        
+        <div class="plugin-grid">
+            {% for page in plugin_pages %}
+            <div class="plugin-card">
+                <div class="plugin-icon">{{ page.icon }}</div>
+                <h3>{{ page.name }}</h3>
+                <p>{{ page.description }}</p>
+                <a href="{{ page.url }}" class="btn btn-primary">Open Plugin</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
